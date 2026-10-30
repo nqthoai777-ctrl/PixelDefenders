@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="vi" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pixel Defenders - Cổng Thông Tin & Database Game</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Font (Press Start 2P for Pixel Headers & Inter for crisp text) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:ital,wght@0,500;0,700;1,400&family=Press+Start+2P&family=VT323&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        pixel: {
+                            bg: '#0d0f17',
+                            card: '#161926',
+                            border: '#2a2f45',
+                            accent: '#6366f1',
+                            gold: '#fbbf24',
+                            purple: '#a855f7',
+                            red: '#ef4444',
+                            green: '#10b981',
+                            blue: '#3b82f6'
+                        }
+                    },
+                    fontFamily: {
+                        pixel: ['"Press Start 2P"', 'cursive'],
+                        vt: ['"VT323"', 'monospace'],
+                        sans: ['"Chakra Petch"', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Pixel Borders & Retro Effects */
+        body {
+            background-color: #0d0f17;
+            background-image: 
+                radial-gradient(#1f2438 1px, transparent 1px),
+                radial-gradient(#1f2438 1px, #0d0f17 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+            color: #e2e8f0;
+            font-family: 'Chakra Petch', sans-serif;
+        }
+
+        .pixel-corners {
+            clip-path: polygon(
+                0 4px, 4px 4px, 4px 0,
+                calc(100% - 4px) 0, calc(100% - 4px) 4px, 100% 4px,
+                100% calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) 100%,
+                4px 100%, 4px calc(100% - 4px), 0 calc(100% - 4px)
+            );
+        }
+
+        .pixel-box {
+            border: 2px solid #2a2f45;
+            box-shadow: 0 4px 0 0 #080a10;
+        }
+
+        .pixel-box:hover {
+            border-color: #6366f1;
+            box-shadow: 0 6px 0 0 #4338ca;
+        }
+
+        .pixel-btn {
+            position: relative;
+            transition: all 0.1s ease;
+        }
+        .pixel-btn:active {
+            transform: translateY(2px);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0d0f17;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a2f45;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #6366f1;
+        }
+
+        /* Scanline effect over page */
+        .scanline {
+            width: 100%;
+            height: 100%;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0, 0, 0, 0.2) 50%,
+                rgba(0, 0, 0, 0.2)
+            );
+            background-size: 100% 4px;
+            position: fixed;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0.2;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col selection:bg-indigo-500 selection:text-white">
+
+    <!-- Retro Overlay Effect -->
+    <div class="scanline"></div>
+
+    <!-- HEADER / NAVIGATION -->
+    <header class="sticky top-0 z-40 bg-pixel-card/90 backdrop-blur-md border-b-2 border-pixel-border px-4 lg:px-8 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+            
+            <!-- Logo -->
+            <div class="flex items-center gap-3 cursor-pointer" onclick="switchTab('home')">
+                <div class="w-10 h-10 bg-indigo-600 rounded flex items-center justify-center border-2 border-indigo-400 shadow-lg text-yellow-300">
+                    <i class="fa-solid fa-shield-halved text-2xl animate-pulse"></i>
+                </div>
+                <div>
+                    <h1 class="font-pixel text-sm md:text-base text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 via-indigo-400 to-pink-500 tracking-wider">
+                        PIXEL DEFENDERS
+                    </h1>
+                    <p class="text-xs text-gray-400 font-mono tracking-widest uppercase">Database & Wiki Guide</p>
+                </div>
+            </div>
+
+            <!-- Desktop Nav Links -->
+            <nav class="hidden md:flex items-center gap-1 font-semibold text-sm">
+                <button onclick="switchTab('home')" id="nav-home" class="nav-btn px-4 py-2 rounded-lg hover:bg-pixel-border transition-colors text-yellow-400 flex items-center gap-2">
+                    <i class="fa-solid fa-house"></i> Trang Chủ
+                </button>
+                <button onclick="switchTab('heroes')" id="nav-heroes" class="nav-btn px-4 py-2 rounded-lg hover:bg-pixel-border transition-colors text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-user-ninja"></i> Tướng
+                </button>
+                <button onclick="switchTab('items')" id="nav-items" class="nav-btn px-4 py-2 rounded-lg hover:bg-pixel-border transition-colors text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-wand-magic-sparkles"></i> Trang Bị
+                </button>
+                <button onclick="switchTab('monsters')" id="nav-monsters" class="nav-btn px-4 py-2 rounded-lg hover:bg-pixel-border transition-colors text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-skull"></i> Quái Vật
+                </button>
+                <button onclick="switchTab('guides')" id="nav-guides" class="nav-btn px-4 py-2 rounded-lg hover:bg-pixel-border transition-colors text-gray-300 flex items-center gap-2">
+                    <i class="fa-solid fa-book-bookmark"></i> Cẩm Nang
+                </button>
+            </nav>
+
+            <!-- Actions / Search -->
+            <div class="flex items-center gap-3">
+                <div class="relative hidden sm:block">
+                    <input type="text" id="global-search" oninput="handleSearch(this.value)" placeholder="Tìm tướng, kỹ năng..." class="bg-pixel-bg border-2 border-pixel-border rounded-lg px-3 py-1.5 pl-9 text-xs focus:border-indigo-500 focus:outline-none w-48 lg:w-64 transition-all">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-2.5 text-gray-400 text-xs"></i>
+                </div>
+                <button onclick="copyCode('PIXEL2026')" class="pixel-btn bg-amber-500 hover:bg-amber-600 text-black font-bold px-3 py-1.5 rounded text-xs flex items-center gap-1.5 border border-amber-300 shadow">
+                    <i class="fa-solid fa-gift"></i> <span class="hidden lg:inline">Code:</span> PIXEL2026
+                </button>
+                <!-- Mobile Menu Button -->
+                <button onclick="toggleMobileNav()" class="md:hidden text-gray-300 hover:text-white p-2 text-xl">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Navigation Drawer -->
+        <div id="mobile-nav" class="hidden md:hidden mt-3 pt-3 border-t border-pixel-border flex flex-col gap-2 font-medium">
+            <button onclick="switchTab('home'); toggleMobileNav()" class="text-left px-3 py-2 rounded hover:bg-pixel-border text-yellow-400">
+                <i class="fa-solid fa-house w-6"></i> Trang Chủ
+            </button>
+            <button onclick="switchTab('heroes'); toggleMobileNav()" class="text-left px-3 py-2 rounded hover:bg-pixel-border">
+                <i class="fa-solid fa-user-ninja w-6"></i> Danh Sách Tướng
+            </button>
+            <button onclick="switchTab('items'); toggleMobileNav()" class="text-left px-3 py-2 rounded hover:bg-pixel-border">
+                <i class="fa-solid fa-wand-magic-sparkles w-6"></i> Trang Bị
+            </button>
+            <button onclick="switchTab('monsters'); toggleMobileNav()" class="text-left px-3 py-2 rounded hover:bg-pixel-border">
+                <i class="fa-solid fa-skull w-6"></i> Quái Vật
+            </button>
+            <button onclick="switchTab('guides'); toggleMobileNav()" class="text-left px-3 py-2 rounded hover:bg-pixel-border">
+                <i class="fa-solid fa-book-bookmark w-6"></i> Cẩm Nang Chơi
+            </button>
+            <div class="pt-2">
+                <input type="text" oninput="handleSearch(this.value)" placeholder="Tìm kiếm nhanh..." class="w-full bg-pixel-bg border border-pixel-border rounded px-3 py-2 text-xs">
+            </div>
+        </div>
+    </header>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="flex-grow max-w-7xl w-full mx-auto p-4 lg:p-6">
+
+        <!-- VIEW 1: HOME PAGE -->
+        <section id="view-home" class="space-y-8">
+            <!-- Hero Banner -->
+            <div class="relative rounded-2xl bg-gradient-to-r from-indigo-900/80 via-purple-900/80 to-pixel-card border-2 border-indigo-500/30 p-6 md:p-10 overflow-hidden shadow-2xl">
+                <div class="absolute -right-10 -bottom-10 opacity-20 pointer-events-none">
+                    <i class="fa-solid fa-chess-knight text-[240px] text-indigo-400"></i>
+                </div>
+                <div class="relative z-10 max-w-2xl space-y-4">
+                    <span class="bg-indigo-500/20 text-indigo-300 border border-indigo-500/40 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">
+                        Phiên bản v2.4 Updated
+                    </span>
+                    <h2 class="text-2xl md:text-4xl font-bold font-pixel leading-relaxed text-white">
+                        HƯỚNG DẪN & DATABASE PIXEL DEFENDERS
+                    </h2>
+                    <p class="text-gray-300 text-sm md:text-base leading-relaxed">
+                        Tra cứu toàn bộ thông số tướng, chỉ số nâng cấp theo cấp sao, công thức gộp đồ và chiến thuật xếp hình chống tràn quái tối ưu nhất cho anh em game thủ.
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="switchTab('heroes')" class="pixel-btn bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-lg text-sm flex items-center gap-2 shadow-lg border-b-4 border-indigo-900">
+                            <i class="fa-solid fa-users"></i> Xem Danh Sách Tướng
+                        </button>
+                        <button onclick="switchTab('guides')" class="pixel-btn bg-pixel-card hover:bg-pixel-border text-gray-200 border border-pixel-border font-bold px-5 py-2.5 rounded-lg text-sm flex items-center gap-2">
+                            <i class="fa-solid fa-fire"></i> Mẹo Xếp Đội Hình
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Stats & Highlights -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-pixel-card border border-pixel-border p-4 rounded-xl flex items-center gap-4">
+                    <div class="w-12 h-12 bg-amber-500/10 text-amber-400 rounded-lg flex items-center justify-center text-2xl border border-amber-500/30">
+                        <i class="fa-solid fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold font-pixel text-white" id="stat-heroes-count">8</div>
+                        <div class="text-xs text-gray-400">Tướng Trong DB</div>
+                    </div>
+                </div>
+
+                <div class="bg-pixel-card border border-pixel-border p-4 rounded-xl flex items-center gap-4">
+                    <div class="w-12 h-12 bg-purple-500/10 text-purple-400 rounded-lg flex items-center justify-center text-2xl border border-purple-500/30">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold font-pixel text-white">4</div>
+                        <div class="text-xs text-gray-400">Độ Hiếm Khác Nhau</div>
+                    </div>
+                </div>
+
+                <div class="bg-pixel-card border border-pixel-border p-4 rounded-xl flex items-center gap-4">
+                    <div class="w-12 h-12 bg-emerald-500/10 text-emerald-400 rounded-lg flex items-center justify-center text-2xl border border-emerald-500/30">
+                        <i class="fa-solid fa-cubes"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold font-pixel text-white">3★</div>
+                        <div class="text-xs text-gray-400">Cấp Tối Đa Merge</div>
+                    </div>
+                </div>
+
+                <div class="bg-pixel-card border border-pixel-border p-4 rounded-xl flex items-center gap-4">
+                    <div class="w-12 h-12 bg-blue-500/10 text-blue-400 rounded-lg flex items-center justify-center text-2xl border border-blue-500/30">
+                        <i class="fa-solid fa-gamepad"></i>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold font-pixel text-white">100%</div>
+                        <div class="text-xs text-gray-400">Free Database</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Featured Heroes Section -->
+            <div class="space-y-4">
+                <div class="flex items-center justify-between">
+                    <h3 class="text-lg font-bold font-pixel text-yellow-400 flex items-center gap-2">
+                        <i class="fa-solid fa-star"></i> TƯỚNG NỔI BẬT (TIER S)
+                    </h3>
+                    <button onclick="switchTab('heroes')" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1">
+                        Xem tất cả <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="featured-heroes-grid">
+                    <!-- Dynamic Featured Content JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 2: HEROES DATABASE WITH SIDEBAR FILTER -->
+        <section id="view-heroes" class="hidden space-y-6">
+            <div class="flex flex-col md:flex-row gap-6">
+                
+                <!-- SIDEBAR FILTERS -->
+                <aside class="w-full md:w-64 shrink-0 space-y-6 bg-pixel-card border border-pixel-border p-5 rounded-xl h-fit sticky top-20">
+                    <div class="flex items-center justify-between border-b border-pixel-border pb-3">
+                        <h3 class="font-bold font-pixel text-sm text-yellow-400 flex items-center gap-2">
+                            <i class="fa-solid fa-filter"></i> BỘ LỌC TƯỚNG
+                        </h3>
+                        <button onclick="resetFilters()" class="text-xs text-gray-400 hover:text-white underline">Đặt lại</button>
+                    </div>
+
+                    <!-- Filter By Role -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider block">Vai trò (Role)</label>
+                        <div class="space-y-1 text-sm">
+                            <button onclick="setFilter('role', 'all')" class="filter-role-btn w-full text-left px-3 py-1.5 rounded text-xs bg-indigo-600 text-white font-medium">Tất cả vai trò</button>
+                            <button onclick="setFilter('role', 'Tanker')" class="filter-role-btn w-full text-left px-3 py-1.5 rounded text-xs text-gray-400 hover:bg-pixel-border">🛡️ Tanker (Đấu Sĩ)</button>
+                            <button onclick="setFilter('role', 'DPS')" class="filter-role-btn w-full text-left px-3 py-1.5 rounded text-xs text-gray-400 hover:bg-pixel-border">⚔️ DPS (Sát Thương)</button>
+                            <button onclick="setFilter('role', 'Pháp Sư')" class="filter-role-btn w-full text-left px-3 py-1.5 rounded text-xs text-gray-400 hover:bg-pixel-border">🔮 Pháp Sư</button>
+                            <button onclick="setFilter('role', 'Hỗ Trợ')" class="filter-role-btn w-full text-left px-3 py-1.5 rounded text-xs text-gray-400 hover:bg-pixel-border">💚 Hỗ Trợ</button>
+                        </div>
+                    </div>
+
+                    <!-- Filter By Rarity -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider block">Độ hiếm (Rarity)</label>
+                        <div class="space-y-1">
+                            <button onclick="setFilter('rarity', 'all')" class="filter-rarity-btn w-full text-left px-3 py-1.5 rounded text-xs bg-indigo-600 text-white">Tất cả độ hiếm</button>
+                            <button onclick="setFilter('rarity', 'Huyền Thoại')" class="filter-rarity-btn w-full text-left px-3 py-1.5 rounded text-xs text-amber-400 hover:bg-pixel-border">★ Huyền Thoại</button>
+                            <button onclick="setFilter('rarity', 'Sử Thi')" class="filter-rarity-btn w-full text-left px-3 py-1.5 rounded text-xs text-purple-400 hover:bg-pixel-border">★ Sử Thi</button>
+                            <button onclick="setFilter('rarity', 'Hiếm')" class="filter-rarity-btn w-full text-left px-3 py-1.5 rounded text-xs text-blue-400 hover:bg-pixel-border">★ Hiếm</button>
+                            <button onclick="setFilter('rarity', 'Thường')" class="filter-rarity-btn w-full text-left px-3 py-1.5 rounded text-xs text-gray-400 hover:bg-pixel-border">★ Thường</button>
+                        </div>
+                    </div>
+
+                    <!-- Filter By Element -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-semibold text-gray-300 uppercase tracking-wider block">Hệ / Nguyên Tố</label>
+                        <select onchange="setFilter('element', this.value)" id="element-select" class="w-full bg-pixel-bg border border-pixel-border rounded px-3 py-2 text-xs text-gray-200 focus:outline-none focus:border-indigo-500">
+                            <option value="all">Tất cả hệ nguyên tố</option>
+                            <option value="Hỏa">🔥 Hỏa (Lửa)</option>
+                            <option value="Thủy">❄️ Thủy (Băng/Nước)</option>
+                            <option value="Lôi">⚡ Lôi (Sét)</option>
+                            <option value="Đất">🪨 Đất (Thạch)</option>
+                            <option value="Phong">🌪️ Phong (Gió)</option>
+                        </select>
+                    </div>
+                </aside>
+
+                <!-- MAIN HEROES GRID CONTENT -->
+                <div class="flex-grow space-y-4">
+                    <div class="flex items-center justify-between bg-pixel-card border border-pixel-border px-4 py-3 rounded-xl">
+                        <div class="text-xs text-gray-400">
+                            Hiển thị <span id="hero-count-label" class="text-indigo-400 font-bold">0</span> tướng tìm thấy
+                        </div>
+                        <div class="flex items-center gap-2 text-xs">
+                            <span class="text-gray-400">Sắp xếp:</span>
+                            <select onchange="sortHeroes(this.value)" class="bg-pixel-bg border border-pixel-border rounded px-2 py-1 text-xs text-gray-200">
+                                <option value="default">Mặc định</option>
+                                <option value="rarity-desc">Độ hiếm cao trước</option>
+                                <option value="atk-desc">Sát thương cao nhất</option>
+                                <option value="hp-desc">Máu nhiều nhất</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Hero List Container -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4" id="heroes-grid-container">
+                        <!-- Dynamic Cards JS -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 3: ITEMS DATABASE -->
+        <section id="view-items" class="hidden space-y-6">
+            <div class="bg-pixel-card border border-pixel-border p-6 rounded-xl space-y-4">
+                <h2 class="text-xl font-bold font-pixel text-yellow-400 flex items-center gap-2">
+                    <i class="fa-solid fa-shield-cat"></i> TRANG BỊ & NGUYÊN LIỆU
+                </h2>
+                <p class="text-sm text-gray-300">Danh sách vũ khí, giáp, phù hiệu tăng chỉ số cực bá đạo cho tướng khi ra trận.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="items-grid-container">
+                    <!-- Items JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 4: MONSTERS DATABASE -->
+        <section id="view-monsters" class="hidden space-y-6">
+            <div class="bg-pixel-card border border-pixel-border p-6 rounded-xl space-y-4">
+                <h2 class="text-xl font-bold font-pixel text-red-400 flex items-center gap-2">
+                    <i class="fa-solid fa-dragon"></i> KẺ ĐỊCH & BOSS VƯỢT ẢI
+                </h2>
+                <p class="text-sm text-gray-300">Nắm rõ thông số máu, tốc độ di chuyển và cơ chế kỹ năng của quái vật để không bị tràn vắt máu trụ.</p>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="monsters-grid-container">
+                    <!-- Monsters JS -->
+                </div>
+            </div>
+        </section>
+
+        <!-- VIEW 5: GUIDES & STRATEGIES -->
+        <section id="view-guides" class="hidden space-y-6">
+            <div class="bg-pixel-card border border-pixel-border p-6 rounded-xl space-y-6">
+                <h2 class="text-xl font-bold font-pixel text-emerald-400 flex items-center gap-2">
+                    <i class="fa-solid fa-graduation-cap"></i> CẨM NANG & CHIẾN THUẬT XẾP HÌNH
+                </h2>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="bg-pixel-bg border border-pixel-border p-5 rounded-lg space-y-3">
+                        <span class="bg-emerald-500/20 text-emerald-300 text-xs font-bold px-2.5 py-1 rounded">MẸO CHO NGUỜI MỚI</span>
+                        <h3 class="font-bold text-lg text-white">Cách quản lý góc nghẽn (Chokepoint)</h3>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Đừng đặt Tanker ngay cửa ra của quái. Hãy đặt Tanker lùi lại 2 ô ở ngã rẽ cổ chai để các tướng sát thương diện rộng (AoE) hoặc Cung Thủ có đủ khoảng thời gian xả đạn trọn vẹn.
+                        </p>
+                    </div>
+
+                    <div class="bg-pixel-bg border border-pixel-border p-5 rounded-lg space-y-3">
+                        <span class="bg-purple-500/20 text-purple-300 text-xs font-bold px-2.5 py-1 rounded">MERGE MECHANIC</span>
+                        <h3 class="font-bold text-lg text-white">Khi nào nên gộp Tướng lên 2★ / 3★?</h3>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Ở những wave đầu (Wave 1-10), số lượng quân quan trọng hơn chất lượng! 2 con tướng 1★ gây tổng sát thương nhiều hơn 1 con tướng 2★. Hãy phủ kín các ô trước rồi mới tiến hành Merge nâng cấp!
+                        </p>
+                    </div>
+
+                    <div class="bg-pixel-bg border border-pixel-border p-5 rounded-lg space-y-3">
+                        <span class="bg-amber-500/20 text-amber-300 text-xs font-bold px-2.5 py-1 rounded">ĐỘI HÌNH KHUYÊN DÙNG</span>
+                        <h3 class="font-bold text-lg text-white">Combo Khống Chế Băng + Sét Sốc Sát Thương</h3>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Sử dụng **Cung Thủ Băng** làm chậm hàng loạt quái kết hợp với **Pháp Sư Sét** dồn đạn dội điện liên tục. Đây là bộ đôi càn quét quái đông cực kỳ hiệu quả về cuối trận.
+                        </p>
+                    </div>
+
+                    <div class="bg-pixel-bg border border-pixel-border p-5 rounded-lg space-y-3">
+                        <span class="bg-blue-500/20 text-blue-300 text-xs font-bold px-2.5 py-1 rounded">TÀI NGUYÊN</span>
+                        <h3 class="font-bold text-lg text-white">Tối ưu hóa Lượng Vàng Thu Nhập</h3>
+                        <p class="text-xs text-gray-300 leading-relaxed">
+                            Cố gắng kết liễu Boss wave tròn (Wave 5, 10, 15) bằng chiêu kết liễu của tướng sát thương đơn mục tiêu để nhận thêm 20% vàng thưởng nạp đạn nhanh hơn.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- HERO DETAIL MODAL POPUP -->
+    <div id="hero-modal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-pixel-card border-2 border-indigo-500/60 rounded-2xl max-w-2xl w-full p-6 space-y-6 relative shadow-2xl animate-fade-in max-h-[90vh] overflow-y-auto">
+            
+            <!-- Close Button -->
+            <button onclick="closeHeroModal()" class="absolute top-4 right-4 text-gray-400 hover:text-white bg-pixel-bg p-2 rounded-lg border border-pixel-border">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <!-- Modal Header Content -->
+            <div id="modal-header-content" class="flex flex-col sm:flex-row items-start sm:items-center gap-4 border-b border-pixel-border pb-4">
+                <!-- JS Inject -->
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 bg-pixel-bg p-4 rounded-xl border border-pixel-border" id="modal-stats-grid">
+                <!-- JS Inject -->
+            </div>
+
+            <!-- Skills & Merge Effects -->
+            <div class="space-y-4">
+                <h4 class="font-bold font-pixel text-xs text-yellow-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-bolt"></i> BỘ KỸ NĂNG & HIỆU ỨNG MERGE
+                </h4>
+                <div id="modal-skills-content" class="space-y-3">
+                    <!-- JS Inject -->
+                </div>
+            </div>
+
+            <!-- Recommended Items -->
+            <div class="space-y-2">
+                <h4 class="font-bold font-pixel text-xs text-indigo-400 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-shield"></i> TRANG BỊ KHUYÊN DÙNG
+                </h4>
+                <div id="modal-items-content" class="flex flex-wrap gap-2">
+                    <!-- JS Inject -->
+                </div>
+            </div>
+
+            <!-- Lore / Bio -->
+            <div class="space-y-1 bg-pixel-bg/60 p-3 rounded-lg border border-pixel-border">
+                <h4 class="font-bold text-xs text-gray-400 uppercase tracking-wider">Tiểu sử tướng</h4>
+                <p id="modal-bio-content" class="text-xs text-gray-300 italic leading-relaxed"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 hidden bg-indigo-600 text-white font-bold px-4 py-3 rounded-xl border border-indigo-400 shadow-2xl flex items-center gap-3">
+        <i class="fa-solid fa-circle-check text-yellow-300"></i>
+        <span id="toast-msg" class="text-xs">Đã sao chép Giftcode!</span>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-pixel-card border-t border-pixel-border py-6 px-4 text-center text-xs text-gray-400 space-y-2">
+        <div class="font-pixel text-indigo-400 text-xs">PIXEL DEFENDERS DATABASE & WIKI</div>
+        <p>© 2026 Xếp Hình Chiến Thuật Game Guide. Xây dựng cho cộng đồng game thủ.</p>
+    </footer>
+
+    <!-- JAVASCRIPT DATABASE & CORE LOGIC -->
+    <script>
+        // --- 1. HEROES DATABASE (JSON DATA STRUCTURE) ---
+        const HEROES_DATABASE = [
+            {
+                id: "hero_001",
+                name: "Chiến Binh Thép",
+                title: "Lá Chắn Bằng Đá",
+                avatarIcon: "fa-shield-halved",
+                colorScheme: "from-amber-600 to-yellow-800",
+                rarity: "Thường",
+                role: "Tanker",
+                element: "Đất",
+                tier: "A",
+                base_stats: {
+                    hp: 1200,
+                    atk: 85,
+                    def: 50,
+                    attack_speed: 1.0,
+                    range: 1
+                },
+                skills: [
+                    {
+                        skill_name: "Khiên Phản Sát Thương",
+                        description: "Bật khiên hấp thụ 500 sát thương và phản lại 25% sát thương nhận vào cho kẻ địch xung quanh trong 5 giây.",
+                        cooldown: 12
+                    }
+                ],
+                merge_effects: {
+                    star_1: "Tướng cơ bản, đứng ở vị trí ngã rẽ hút sát thương.",
+                    star_2: "+30% Máu tối đa và tạo ra hào quang giảm 15% giáp của quái xung quanh 1 ô.",
+                    star_3: "Khi gộp lên 3★, phóng sóng xung kích làm choáng tất cả quái trên ô trong 2.5 giây."
+                },
+                recommended_items: ["Giáp Gai Thạch Anh", "Khiên Phản Khiên", "Tim Khổng Lồ"],
+                bio: "Sinh ra từ vách đá cao nguyên, Chiến Binh Thép luôn là lá chắn vững chắc nhất bảo vệ tuyến sau cho đồng đội."
+            },
+            {
+                id: "hero_002",
+                name: "Cung Thủ Băng",
+                title: "Mũi Tên Tuyết Lạnh",
+                avatarIcon: "fa-bow-arrow",
+                colorScheme: "from-blue-600 to-cyan-800",
+                rarity: "Hiếm",
+                role: "DPS",
+                element: "Thủy",
+                tier: "S",
+                base_stats: {
+                    hp: 550,
+                    atk: 185,
+                    def: 15,
+                    attack_speed: 1.6,
+                    range: 4
+                },
+                skills: [
+                    {
+                        skill_name: "Mưa Băng Giá",
+                        description: "Bắn ra mưa tên tuyết xuống khu vực 2x2 ô, gây 280 sát thương phép và làm chậm 45% tốc độ di chuyển quái.",
+                        cooldown: 10
+                    }
+                ],
+                merge_effects: {
+                    star_1: "Bắn tên băng làm chậm nhẹ 10% đơn mục tiêu.",
+                    star_2: "Đòn đánh thường có 20% cơ hội đóng băng mục tiêu hoàn toàn trong 1 giây.",
+                    star_3: "Tăng gấp đôi số lượng tên và diện tích chiêu Mưa Băng Giá lên toàn bàn cờ."
+                },
+                recommended_items: ["Cung Băng Vĩnh Cửu", "Nhẫn Bạo Kích", "Nanh Tuyết"],
+                bio: "Thợ săn dạn dẫm vùng Băng Cung, cô sở hữu khả năng làm ngưng trệ bước tiến của cả binh đoàn quái vật."
+            },
+            {
+                id: "hero_003",
+                name: "Pháp Sư Sét",
+                title: "Cuồng Phong Điện",
+                avatarIcon: "fa-bolt-lightning",
+                colorScheme: "from-purple-600 to-indigo-800",
+                rarity: "Sử Thi",
+                role: "Pháp Sư",
+                element: "Lôi",
+                tier: "S",
+                base_stats: {
+                    hp: 480,
+                    atk: 260,
+                    def: 10,
+                    attack_speed: 1.2,
+                    range: 3
+                },
+                skills: [
+                    {
+                        skill_name: "Sét Nảy Dội",
+                        description: "Phóng tia sét giật qua 5 mục tiêu liên tiếp, mỗi lần dội giảm 10% sát thương nhưng gây giật khựng quái.",
+                        cooldown: 8
+                    }
+                ],
+                merge_effects: {
+                    star_1: "Sát thương đơn mục tiêu kèm giật điện nhẹ.",
+                    star_2: "Sét nảy thêm +3 mục tiêu và tăng 25% sát thương bạo kích.",
+                    star_3: "Triệu hồi Bão Sét liên tục giật toàn bộ quái trên đường đi mỗi 3 giây."
+                },
+                recommended_items: ["Trượng Cuồng Phong", "Mặt Nạ Phép", "Ngọc Sét Lôi Thần"],
+                bio: "Tôn sùng sức mạnh của những cơn bão, Pháp Sư Sét có thể biến cả bàn cờ thành điện trường rực cháy."
+            },
+            {
+                id: "hero_004",
+                name: "Kiếm Sĩ Hỏa Long",
+                title: "Lưỡi Kiếm Mất Control",
+                avatarIcon: "fa-fire-flame-curved",
+                colorScheme: "from-red-600 to-orange-800",
+                rarity: "Huyền Thoại",
+                role: "DPS",
+                element: "Hỏa",
+                tier: "S",
+                base_stats: {
+                    hp: 920,
+                    atk: 320,
+                    def: 35,
+                    attack_speed: 1.4,
+                    range: 1
+                },
+                skills: [
+                    {
+                        skill_name: "Hỏa Long Bão Múa",
+                        description: "Xoay lưỡi kiếm rực lửa chém 3 vòng xung quanh, gây 450 sát thương vật lý và thiêu đốt quái 50 sát thương/giây trong 4s.",
+                        cooldown: 11
+                    }
+                ],
+                merge_effects: {
+                    star_1: "Chém cận chiến gây sát thương hỏa diện rộng 1 ô.",
+                    star_2: "+40% Tốc độ đánh và đòn chém gây hiệu ứng thiêu đốt lan sang quái bên cạnh.",
+                    star_3: "Hóa thân thành Rồng Lửa, tăng 100% sát thương và tầm chém rộng ra 3 ô."
+                },
+                recommended_items: ["Kiếm Hỏa Long", "Huyết Giáp", "Giày Tốc Độ"],
+                bio: "Chiến binh huyền thoại mang trong mình dòng máu Rồng Lửa cổ xưa, ngọn lửa của anh chưa bao giờ tắt."
+            },
+            {
+                id: "hero_005",
+                name: "Thánh Nữ Hồi Sinh",
+                title: "Ánh Sáng Cứu Rỗi",
+                avatarIcon: "fa-hand-holding-heart",
+                colorScheme: "from-emerald-600 to-teal-800",
+                rarity: "Hiếm",
+                role: "Hỗ Trợ",
+                element: "Phong",
+                tier: "A",
+                base_stats: {
+                    hp: 600,
+                    atk: 90,
+                    def: 25,
+                    attack_speed: 1.0,
+                    range: 3
+                },
+                skills: [
+                    {
+                        skill_name: "Vòng Quang Thánh",
+                        description: "Hồi 300 HP cho tướng đồng minh xung quanh và tăng 20% tốc độ đánh cho họ trong 6 giây.",
+                        cooldown: 14
+                    }
+                ],
+                merge_effects: {
+                    star_1: "Hồi máu đơn mục tiêu cho tướng mất máu nhiều nhất.",
+                    star_2: "Hồi máu diện rộng 2x2 ô và giải tất cả hiệu ứng khống chế cho đồng minh.",
+                    star_3: "Tạo giáp ảo bằng 50% HP tối đa cho toàn bộ đội hình khi bắt đầu Wave mới."
+                },
+                recommended_items: ["Sách Thánh Y", "Chuông Gió", "Trượng Cứu Rỗi"],
+                bio: "Nữ tu sĩ hiền lành từ Thánh Đường, sự xuất hiện của cô mang lại hy vọng cho mọi chiến binh."
+            },
+            {
+                id: "hero_006",
+                name: "Xạ Thủ Pháo Cối",
+                title: "Oanh Tạc Diện Rộng",
+                avatarIcon: "fa-bomb",
+                colorScheme: "from-stone-600 to-orange-900",
+                rarity: "Sử Thi",
+                role: "DPS",
+                element: "Hỏa",
+                tier: "A",
+                base_stats: {
+                    hp: 650,
+                    atk: 290,
+                    def: 20,
+                    attack_speed: 0.7,
+                    range: 5
+                },
+                skills: [
+                    {
+                        skill_name: "Đạn Pháo Khổng Lồ",
+                        description: "Bắn một quả đạn cối tầm xa vào cụm quái đông nhất, gây 500 sát thương nổ diện rộng và đẩy lùi quái.",
+                        cooldown: 15
+                    }
+                ],
+                merge_effects: {
+                    star_1: "Bắn chậm nhưng sát thương nổ diện rộng 1.5 ô.",
+                    star_2: "Đạn nổ để lại vệt lửa thiêu đốt mặt đất trong 3 giây.",
+                    star_3: "Bắn 3 quả đạn cối liên tiếp mỗi lần dùng kỹ năng."
+                },
+                recommended_items: ["Pháo Nổ Bão Tố", "Kính Nhắm Búp Bê", "Đạn Xuyên Giáp"],
+                bio: "Kỹ sư thiên tài cuồng chất nổ, phương châm của anh là 'Nổ càng to, quái chết càng nhanh'."
+            }
+        ];
+
+        // --- 2. ITEMS DATABASE ---
+        const ITEMS_DATABASE = [
+            { name: "Cung Băng Vĩnh Cửu", icon: "fa-bow-arrow", type: "Vũ Khí", stats: "+25% Tốc đánh, +15% Làm chậm", color: "text-blue-400" },
+            { name: "Kiếm Hỏa Long", icon: "fa-wand-magic-sparkles", type: "Vũ Khí", stats: "+60 Công, Đòn đánh thiêu đốt", color: "text-red-400" },
+            { name: "Giáp Gai Thạch Anh", icon: "fa-shield-cat", type: "Giáp", stats: "+400 Máu, Phản 15% Sát thương", color: "text-amber-400" },
+            { name: "Trượng Cuồng Phong", icon: "fa-hat-wizard", type: "Vũ Khí Phép", stats: "+80 Phép, -15% Thời gian hồi chiêu", color: "text-purple-400" },
+            { name: "Nhẫn Bạo Kích", icon: "fa-ring", type: "Trang Sức", stats: "+20% Tỷ lệ Bạo kích, +30% Sát thương Báo", color: "text-yellow-400" },
+            { name: "Sách Thánh Y", icon: "fa-book-skull", type: "Bổ Trợ", stats: "+30% Hiệu ứng hồi máu & giáp", color: "text-emerald-400" }
+        ];
+
+        // --- 3. MONSTERS DATABASE ---
+        const MONSTERS_DATABASE = [
+            { name: "Goblin Đột Kích", type: "Quái Thường", hp: "450 HP", speed: "Nhanh (1.5)", skill: "Tăng tốc khi còn dưới 30% Máu", icon: "fa-ghost", color: "text-green-400" },
+            { name: "Chiến Binh Xương", type: "Quái Giáp", hp: "1,200 HP", speed: "Trung bình (1.0)", skill: "Giảm 30% sát thương vật lý", icon: "fa-skull-crossbones", color: "text-gray-300" },
+            { name: "Boss Rồng Cổ Đại", type: "Boss Ải", hp: "15,000 HP", speed: "Chậm (0.6)", skill: "Kháng khống chế, Phun lửa thiêu diệt 1 ô lính", icon: "fa-dragon", color: "text-red-500" }
+        ];
+
+        // --- STATE MANAGEMENT ---
+        let currentTab = 'home';
+        let currentFilters = { role: 'all', rarity: 'all', element: 'all', search: '' };
+        let currentSort = 'default';
+
+        // --- INIT PAGE ---
+        window.onload = function() {
+            renderFeaturedHeroes();
+            renderHeroesGrid();
+            renderItemsGrid();
+            renderMonstersGrid();
+            document.getElementById('stat-heroes-count').innerText = HEROES_DATABASE.length;
+        };
+
+        // --- NAVIGATION LOGIC ---
+        function switchTab(tabId) {
+            currentTab = tabId;
+            const views = ['home', 'heroes', 'items', 'monsters', 'guides'];
+            views.forEach(v => {
+                const el = document.getElementById(`view-${v}`);
+                if (el) el.classList.add('hidden');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+            // Update Header Nav Active States
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('text-yellow-400');
+                btn.classList.add('text-gray-300');
+            });
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-gray-300');
+                activeNav.classList.add('text-yellow-400');
+            }
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function toggleMobileNav() {
+            const nav = document.getElementById('mobile-nav');
+            nav.classList.toggle('hidden');
+        }
+
+        // --- RENDER HERO CARDS ---
+        function renderHeroesGrid() {
+            const container = document.getElementById('heroes-grid-container');
+            container.innerHTML = '';
+
+            let filtered = HEROES_DATABASE.filter(hero => {
+                if (currentFilters.role !== 'all' && hero.role !== currentFilters.role) return false;
+                if (currentFilters.rarity !== 'all' && hero.rarity !== currentFilters.rarity) return false;
+                if (currentFilters.element !== 'all' && hero.element !== currentFilters.element) return false;
+                if (currentFilters.search) {
+                    const q = currentFilters.search.toLowerCase();
+                    const matchName = hero.name.toLowerCase().includes(q);
+                    const matchRole = hero.role.toLowerCase().includes(q);
+                    const matchSkill = hero.skills.some(s => s.skill_name.toLowerCase().includes(q));
+                    if (!matchName && !matchRole && !matchSkill) return false;
+                }
+                return true;
+            });
+
+            // Sorting
+            if (currentSort === 'atk-desc') {
+                filtered.sort((a,b) => b.base_stats.atk - a.base_stats.atk);
+            } else if (currentSort === 'hp-desc') {
+                filtered.sort((a,b) => b.base_stats.hp - a.base_stats.hp);
+            } else if (currentSort === 'rarity-desc') {
+                const rarityOrder = { "Huyền Thoại": 4, "Sử Thi": 3, "Hiếm": 2, "Thường": 1 };
+                filtered.sort((a,b) => rarityOrder[b.rarity] - rarityOrder[a.rarity]);
+            }
+
+            document.getElementById('hero-count-label').innerText = filtered.length;
+
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full py-12 text-center text-gray-400 space-y-2">
+                        <i class="fa-solid fa-ghost text-4xl text-gray-600"></i>
+                        <p class="text-sm">Không tìm thấy tướng nào phù hợp bộ lọc!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach(hero => {
+                const card = createHeroCardHTML(hero);
+                container.appendChild(card);
+            });
+        }
+
+        function renderFeaturedHeroes() {
+            const container = document.getElementById('featured-heroes-grid');
+            container.innerHTML = '';
+            const featured = HEROES_DATABASE.filter(h => h.tier === 'S').slice(0, 3);
+            featured.forEach(hero => {
+                const card = createHeroCardHTML(hero);
+                container.appendChild(card);
+            });
+        }
+
+        function createHeroCardHTML(hero) {
+            const div = document.createElement('div');
+            div.className = "pixel-box bg-pixel-card p-4 rounded-xl space-y-3 cursor-pointer transition-all hover:-translate-y-1";
+            div.onclick = () => openHeroModal(hero.id);
+
+            const rarityColors = {
+                "Huyền Thoại": "text-amber-400 border-amber-500/40 bg-amber-500/10",
+                "Sử Thi": "text-purple-400 border-purple-500/40 bg-purple-500/10",
+                "Hiếm": "text-blue-400 border-blue-500/40 bg-blue-500/10",
+                "Thường": "text-gray-400 border-gray-500/40 bg-gray-500/10"
+            };
+
+            div.innerHTML = `
+                <div class="flex items-start justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-12 h-12 rounded-lg bg-gradient-to-br ${hero.colorScheme} flex items-center justify-center text-white text-xl shadow border border-white/20">
+                            <i class="fa-solid ${hero.avatarIcon}"></i>
+                        </div>
+                        <div>
+                            <h4 class="font-bold text-base text-white hover:text-indigo-300 transition-colors">${hero.name}</h4>
+                            <p class="text-xs text-gray-400">${hero.title}</p>
+                        </div>
+                    </div>
+                    <span class="text-[10px] font-bold px-2 py-0.5 rounded border ${rarityColors[hero.rarity] || 'text-gray-400'} uppercase">
+                        ${hero.rarity}
+                    </span>
+                </div>
+
+                <!-- Stats summary badges -->
+                <div class="grid grid-cols-3 gap-2 pt-1 text-center text-xs">
+                    <div class="bg-pixel-bg p-1.5 rounded border border-pixel-border">
+                        <div class="text-gray-400 text-[10px]">MÁU</div>
+                        <div class="font-bold text-red-400">${hero.base_stats.hp}</div>
+                    </div>
+                    <div class="bg-pixel-bg p-1.5 rounded border border-pixel-border">
+                        <div class="text-gray-400 text-[10px]">CÔNG</div>
+                        <div class="font-bold text-yellow-400">${hero.base_stats.atk}</div>
+                    </div>
+                    <div class="bg-pixel-bg p-1.5 rounded border border-pixel-border">
+                        <div class="text-gray-400 text-[10px]">TẦM BẮN</div>
+                        <div class="font-bold text-indigo-400">${hero.base_stats.range} ô</div>
+                    </div>
+                </div>
+
+                <!-- Skill preview -->
+                <div class="text-xs bg-indigo-950/30 border border-indigo-500/20 p-2 rounded text-gray-300 line-clamp-2">
+                    <span class="text-indigo-400 font-bold">Skill:</span> ${hero.skills[0]?.description || 'Chưa cập nhật'}
+                </div>
+            `;
+            return div;
+        }
+
+        // --- RENDER ITEMS & MONSTERS ---
+        function renderItemsGrid() {
+            const container = document.getElementById('items-grid-container');
+            container.innerHTML = '';
+            ITEMS_DATABASE.forEach(item => {
+                const div = document.createElement('div');
+                div.className = "bg-pixel-bg border border-pixel-border p-4 rounded-xl flex items-center gap-4";
+                div.innerHTML = `
+                    <div class="w-12 h-12 bg-pixel-card rounded-lg flex items-center justify-center text-2xl border border-pixel-border ${item.color}">
+                        <i class="fa-solid ${item.icon}"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-sm text-white">${item.name}</div>
+                        <div class="text-xs text-indigo-400 font-medium">${item.type}</div>
+                        <div class="text-xs text-gray-400 mt-1">${item.stats}</div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderMonstersGrid() {
+            const container = document.getElementById('monsters-grid-container');
+            container.innerHTML = '';
+            MONSTERS_DATABASE.forEach(monster => {
+                const div = document.createElement('div');
+                div.className = "bg-pixel-bg border border-pixel-border p-4 rounded-xl space-y-2";
+                div.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <i class="fa-solid ${monster.icon} ${monster.color} text-xl"></i>
+                            <span class="font-bold text-sm text-white">${monster.name}</span>
+                        </div>
+                        <span class="text-[10px] bg-red-950 text-red-300 border border-red-800 px-2 py-0.5 rounded">${monster.type}</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2 text-xs pt-1">
+                        <div class="text-gray-400">Máu: <span class="text-red-400 font-bold">${monster.hp}</span></div>
+                        <div class="text-gray-400">Tốc độ: <span class="text-yellow-400 font-bold">${monster.speed}</span></div>
+                    </div>
+                    <div class="text-xs text-gray-300 pt-1 border-t border-pixel-border/50">
+                        <span class="text-red-400 font-semibold">Đặc tính:</span> ${monster.skill}
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // --- FILTER & SEARCH LOGIC ---
+        function setFilter(type, value) {
+            currentFilters[type] = value;
+
+            // UI Button Highlighting
+            if (type === 'role') {
+                document.querySelectorAll('.filter-role-btn').forEach(btn => {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                    btn.classList.add('text-gray-400');
+                });
+                event.currentTarget.classList.add('bg-indigo-600', 'text-white');
+            } else if (type === 'rarity') {
+                document.querySelectorAll('.filter-rarity-btn').forEach(btn => {
+                    btn.classList.remove('bg-indigo-600', 'text-white');
+                });
+                event.currentTarget.classList.add('bg-indigo-600', 'text-white');
+            }
+
+            renderHeroesGrid();
+        }
+
+        function handleSearch(val) {
+            currentFilters.search = val;
+            if (currentTab !== 'heroes') {
+                switchTab('heroes');
+            }
+            renderHeroesGrid();
+        }
+
+        function resetFilters() {
+            currentFilters = { role: 'all', rarity: 'all', element: 'all', search: '' };
+            document.getElementById('element-select').value = 'all';
+            document.getElementById('global-search').value = '';
+            renderHeroesGrid();
+        }
+
+        function sortHeroes(val) {
+            currentSort = val;
+            renderHeroesGrid();
+        }
+
+        // --- HERO MODAL DETAILED VIEW ---
+        function openHeroModal(heroId) {
+            const hero = HEROES_DATABASE.find(h => h.id === heroId);
+            if (!hero) return;
+
+            // Modal Header
+            document.getElementById('modal-header-content').innerHTML = `
+                <div class="w-16 h-16 rounded-xl bg-gradient-to-br ${hero.colorScheme} flex items-center justify-center text-white text-3xl shadow-lg border-2 border-white/30 shrink-0">
+                    <i class="fa-solid ${hero.avatarIcon}"></i>
+                </div>
+                <div class="space-y-1">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-xl text-white font-pixel">${hero.name}</h3>
+                        <span class="text-xs font-bold px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-300 border border-indigo-500/40">Hệ ${hero.element}</span>
+                    </div>
+                    <p class="text-xs text-gray-400">${hero.title} • Vai trò: <span class="text-yellow-400 font-semibold">${hero.role}</span></p>
+                </div>
+            `;
+
+            // Stats Grid
+            document.getElementById('modal-stats-grid').innerHTML = `
+                <div class="text-center">
+                    <div class="text-[10px] text-gray-400 uppercase">Máu (HP)</div>
+                    <div class="font-bold text-red-400 text-sm">${hero.base_stats.hp}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-[10px] text-gray-400 uppercase">Tấn Công</div>
+                    <div class="font-bold text-yellow-400 text-sm">${hero.base_stats.atk}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-[10px] text-gray-400 uppercase">Giáp</div>
+                    <div class="font-bold text-blue-400 text-sm">${hero.base_stats.def}</div>
+                </div>
+                <div class="text-center">
+                    <div class="text-[10px] text-gray-400 uppercase">Tốc Đánh</div>
+                    <div class="font-bold text-emerald-400 text-sm">${hero.base_stats.attack_speed}s</div>
+                </div>
+                <div class="text-center col-span-2 sm:col-span-1">
+                    <div class="text-[10px] text-gray-400 uppercase">Tầm Đánh</div>
+                    <div class="font-bold text-purple-400 text-sm">${hero.base_stats.range} ô</div>
+                </div>
+            `;
+
+            // Skills & Merge Effects
+            let skillsHTML = `
+                <div class="bg-pixel-bg p-3 rounded-lg border border-pixel-border space-y-1">
+                    <div class="flex items-center justify-between">
+                        <span class="font-bold text-xs text-yellow-400">${hero.skills[0].skill_name}</span>
+                        <span class="text-[10px] text-gray-400">Hồi chiêu: ${hero.skills[0].cooldown}s</span>
+                    </div>
+                    <p class="text-xs text-gray-300 leading-relaxed">${hero.skills[0].description}</p>
+                </div>
+                
+                <!-- Merge Progression -->
+                <div class="space-y-2 pt-2">
+                    <div class="text-xs font-bold text-gray-300">Tiến hóa Merge qua từng cấp sao:</div>
+                    <div class="grid grid-cols-1 gap-2 text-xs">
+                        <div class="bg-pixel-bg/80 p-2 rounded border border-gray-700/50 flex gap-2">
+                            <span class="text-amber-400 font-bold shrink-0">1★:</span>
+                            <span class="text-gray-300">${hero.merge_effects.star_1}</span>
+                        </div>
+                        <div class="bg-pixel-bg/80 p-2 rounded border border-amber-700/50 flex gap-2">
+                            <span class="text-amber-400 font-bold shrink-0">2★:</span>
+                            <span class="text-gray-300">${hero.merge_effects.star_2}</span>
+                        </div>
+                        <div class="bg-pixel-bg/80 p-2 rounded border border-purple-700/50 flex gap-2">
+                            <span class="text-purple-400 font-bold shrink-0">3★:</span>
+                            <span class="text-gray-300">${hero.merge_effects.star_3}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.getElementById('modal-skills-content').innerHTML = skillsHTML;
+
+            // Items
+            let itemsHTML = '';
+            hero.recommended_items.forEach(itemName => {
+                itemsHTML += `<span class="bg-indigo-950/60 border border-indigo-500/30 text-indigo-300 text-xs px-2.5 py-1 rounded">${itemName}</span>`;
+            });
+            document.getElementById('modal-items-content').innerHTML = itemsHTML;
+
+            // Bio
+            document.getElementById('modal-bio-content').innerText = hero.bio;
+
+            // Open Modal
+            document.getElementById('hero-modal').classList.remove('hidden');
+        }
+
+        function closeHeroModal() {
+            document.getElementById('hero-modal').classList.add('hidden');
+        }
+
+        // --- TOAST UTILITY ---
+        function copyCode(codeStr) {
+            const el = document.createElement('textarea');
+            el.value = codeStr;
+            document.body.appendChild(el);
+            el.select();
+            document.execCommand('copy');
+            document.body.removeChild(el);
+
+            const toast = document.getElementById('toast');
+            document.getElementById('toast-msg').innerText = `Đã sao chép Giftcode: ${codeStr}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
